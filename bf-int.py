@@ -1,13 +1,13 @@
 # a very garbage brainfuck interpreter in python
+# it still has some bugs and weird behavior :/
 
 class bfInterpreter():
     def __init__(self, filename: str):
         self.filename = filename
         self.load_prgm()
-        
         self.byte_array = [0] * 30000
         self.running = True
-        self.instruction_ptr = 0
+        self.instruction_ptr = -1
         self.data_ptr = 0
 
         while self.running:
@@ -45,10 +45,31 @@ class bfInterpreter():
                 self.program += char
     
     def left_bracket(self):
-        pass
-    
-    def right_bracket(self):
-        pass
+        left_bracket_loc = self.instruction_ptr
+        if self.byte_array[self.data_ptr] == 0:
+            bracket_tally = 1
+            while bracket_tally != 0 and self.instruction_ptr < len(self.program) - 1:
+                self.instruction_ptr += 1
+                if self.program[self.instruction_ptr] == '[':
+                    bracket_tally += 1
+                elif self.program[self.instruction_ptr] == ']':
+                    bracket_tally -= 1
+            
+            if self.instruction_ptr >= len(self.program):
+                raise SyntaxError(f"Did not find matching right bracket to the left bracket at {left_bracket_loc}.")
 
+    def right_bracket(self):
+        right_bracket_loc = self.instruction_ptr
+        if self.byte_array[self.data_ptr] != 0:
+            bracket_tally = 1
+            while bracket_tally != 0 and self.instruction_ptr > 0:
+                self.instruction_ptr -= 1
+                if self.program[self.instruction_ptr] == ']':
+                    bracket_tally += 1
+                elif self.program[self.instruction_ptr] == '[':
+                    bracket_tally -= 1
+            
+            if self.instruction_ptr < 0:
+                raise SyntaxError(f"Did not find matching left bracket to the right bracket at {right_bracket_loc}.")
 
 bfInterpreter(input("Please enter filename with extension here: "))
