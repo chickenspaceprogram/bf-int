@@ -3,8 +3,7 @@
 class bfInterpreter():
     def __init__(self, filename: str):
         self.filename = filename
-        self.load_file()
-        self.clean_str()
+        self.load_prgm()
         
         self.byte_array = [0] * 30000
         self.running = True
@@ -13,7 +12,6 @@ class bfInterpreter():
 
         while self.running:
             self.instruction_ptr += 1
-
             # this if tree is cursed as hell, it is painful to look at. im sorry for your eyeballs
 
             if self.program[self.instruction_ptr] == '>': # Moves data pointer to the cell on the right
@@ -36,14 +34,21 @@ class bfInterpreter():
             if self.instruction_ptr >= len(self.program) - 1:
                 self.running = False
 
-    def load_file(self):
+    def load_prgm(self):
+        with open(self.filename, 'r') as self.file:
+            self.inputted_prgm = self.file.read()
+        
+        self.valid_chars = ['>', '<', '+', '-', '.', ',', '[', ']']
         self.program = ''
-
-    def clean_str(self):
-        pass
+        for char in self.inputted_prgm:
+            if char in self.valid_chars:
+                self.program += char
     
     def left_bracket(self):
         pass
     
     def right_bracket(self):
         pass
+
+
+bfInterpreter(input("Please enter filename with extension here: "))
